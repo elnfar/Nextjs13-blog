@@ -1,13 +1,10 @@
 'use client'
 
 import React,{ChangeEvent, FormEvent, useMemo, useState} from 'react'
-import { FieldValues, SubmitHandler, useForm } from 'react-hook-form'
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
-
 import { toast } from 'react-hot-toast'
 import Input from '@/components/input/Input'
-import UploadWidget from '@/components/ImageUpload'
 import ImageUpload from '@/components/ImageUpload'
 
 
@@ -28,6 +25,7 @@ const initialState:InitalStateProps = {
 export default function page() {
 
     const [state,setState] = useState(initialState)
+    const [isLoading,setIsLoading] = useState(true)
     const router = useRouter()
 
 
@@ -35,21 +33,24 @@ export default function page() {
   
 
     const onSubmit = (event:FormEvent) => {
-        event.preventDefault()
 
+        setIsLoading(true)
+
+        event.preventDefault()
 
         axios.post('/api/blogs',state)
         .then(() => {
-
+            toast.success('Created successfully')
+            router.refresh()
             router.push('/')
-
             // router.push('/')
         })
 
         .catch(() => {
             toast.error('Went wring') 
+        }).finally(() => {
+            setIsLoading(false)
         })
-        router.refresh()
     }
 	function handleChange(event:ChangeEvent<HTMLInputElement> ) {
 		setState({ ...state, [event.target.name]: event.target.value });
@@ -61,24 +62,6 @@ export default function page() {
         }));
       };
     
-      const imageSrc = state.imageSrc;
-
-//       const onSubmits = async () => {
-//     const formData = new FormData();
-//     formData.append('file', image);
-//     formData.append('upload_preset', preset);
-//     try {
-//       const res = await axios.post(url, formData);
-//       const imageUrl = res.data.secure_url;
-//       const image = await axios.post('http://localhost:3000/upload', {
-//         imageUrl
-//       });
-//       setImage(image.data);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
 
   return (
     <form onSubmit={onSubmit} className='w-[600px] h-[700px] mx-auto py-12'>
