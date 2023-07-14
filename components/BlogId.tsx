@@ -6,6 +6,7 @@ import React, { ChangeEvent, FormEvent, useState } from 'react'
 import Image from 'next/image'
 import ImageUpload from './ImageUpload'
 import Input from './input/Input'
+import { toast } from 'react-hot-toast'
 
 
 interface BlogProps {
@@ -37,6 +38,8 @@ export default function BlogId({name,description,imageSrc,blogId}:BlogProps) {
 
     const router = useRouter()
     const [onActive,setOnActive] = useState(false)
+    const [isLoading,setIsLoading] = useState(false)
+
 
 
     const [state,setState] = useState(initialState)
@@ -48,36 +51,42 @@ export default function BlogId({name,description,imageSrc,blogId}:BlogProps) {
 
 
       const onSubmit = (event:FormEvent) => {
+
+        setIsLoading(true)
+
         event.preventDefault()
         axios.put(`/api/blogs/${blogId}`,state)
         .then(() => {
+          toast.success('Updated Successfully')
             router.refresh()
-            // router.push('/')
-            // reset()
+            router.push('/')
         })
 
         .catch((err) => {
             throw new Error(err)
         })
         .finally(() => {
-            router.push('/')
+            setIsLoading(false)
         })
     }
 
     const onDelete = (event:FormEvent) => {
+
+      setIsLoading(true)
+
         event.preventDefault()
         axios.delete(`/api/blogs/${blogId}`)
         .then(() => {
+            toast.success('Updated Successfully')
             router.refresh()
-            // router.push('/')
-            // reset()
+            router.push('/')
         })
 
         .catch((err) => {
             throw new Error(err)
         })
         .finally(() => {
-            router.push('/')
+            setIsLoading(false)
         })
     }
 
@@ -108,7 +117,7 @@ export default function BlogId({name,description,imageSrc,blogId}:BlogProps) {
 
 <div className="flex justify-center gap-2">
     <button onClick={() => setOnActive(!onActive)} className="uppercase">edit</button>
-    <button className="uppercase" onClick={onDelete}>Delete</button>
+    <button disabled={isLoading} className="uppercase" onClick={onDelete}>Delete</button>
 </div>
 
 
@@ -123,7 +132,7 @@ export default function BlogId({name,description,imageSrc,blogId}:BlogProps) {
         <Input placeholder='Description' id="description" type='text' value={state.description} name='description' onChange={handleChange}/>
         <div> 
         </div>
-        <button type='submit'>Submit</button>
+        <button type='submit' disabled={isLoading}>Submit</button>
         </div>
         
     </form>

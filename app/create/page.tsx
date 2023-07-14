@@ -25,7 +25,7 @@ const initialState:InitalStateProps = {
 export default function page() {
 
     const [state,setState] = useState(initialState)
-    const [isLoading,setIsLoading] = useState(true)
+    const [isLoading,setIsLoading] = useState(false)
     const router = useRouter()
 
 
@@ -76,7 +76,7 @@ export default function page() {
         <Input big placeholder='Blog content or description' id='description' type='text' value={state.description} name='description' onChange={handleChange}/>
         <div> 
         </div>
-        <button type='submit'>Submit</button>
+        <button type='submit' disabled={isLoading}>Submit</button>
         </div>
         
     </form>
